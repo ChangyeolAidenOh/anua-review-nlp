@@ -62,8 +62,8 @@ def find_optimal_k(texts, dictionary, corpus, mode, rating, output_dir, min_k=2,
 
 # === 진입점 ===
 if __name__ == "__main__":
-    df = pd.read_csv("anua_cleansing_oil_reviews.csv")
-    output_dir = "outputs2"
+    df = pd.read_csv("../anua_cleansing_oil_reviews.csv")
+    output_dir = "../outputs2"
     os.makedirs(output_dir, exist_ok=True)
 
     summary_rows = []

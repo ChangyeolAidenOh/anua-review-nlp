@@ -1,0 +1,18 @@
+# macOS
+.DS_Store
+
+# PyCharm
+.idea/
+
+# Generated outputs (reproducible via code)
+outputs/
+outputs_cleansing_oil/
+outputs_toner/
+outputs_tfidf/
+outputs2/
+anua_dashboard_stylish/
+
+# Data files (too large, not for public repo)
+*.xlsx
+anua_cleansing_oil_reviews.csv
+anua_toner_reviews.csv

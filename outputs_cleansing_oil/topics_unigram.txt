@@ -1,6 +1,0 @@
-==== UNIGRAM ====
-
-⭐ Rating 1 | Optimal K = 3 | Coherence = 0.3625
-  🔹 Topic 1: acne, week, break, day, like, start, bad, sensitive
-  🔹 Topic 2: acne, like, buy, start, pore, bad, break, get
-  🔹 Topic 3: think, work, skincare, acne, change, cause, result, try

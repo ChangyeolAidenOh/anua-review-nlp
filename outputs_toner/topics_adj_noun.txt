@@ -1,0 +1,37 @@
+==== ADJ_NOUN ====
+
+⭐ Rating 1 | Optimal K = 6 | Coherence = 0.5861
+  🔹 Topic 1: healthy_skin, korean_skincare, red_bump, high_hope, potent_retinoid, effective_product, other_toner, high_potency
+  🔹 Topic 2: clear_skin, positive_review, tik_tok, korean_beauty, uneven_skin, pore_cleanser, single_night, whole_collection
+  🔹 Topic 3: new_formula, first_couple, bad_reaction, nice_glow, old_formula, -_beauty, horrible_breakout, prior_formula
+  🔹 Topic 4: prone_skin, round_lab, cheap_toner, unscented_product, literal_thing, hyped_product, strong_prescription, extra_hydration
+  🔹 Topic 5: cystic_acne, few_day, good_review, sensitive_skin, inner_arm, high_concentration, natural_ingredient, only_thing
+  🔹 Topic 6: sensitive_skin, next_day, many_people, clear_skin, tiny_bump, prone_skin, white_head, only_change
+
+⭐ Rating 2 | Optimal K = 6 | Coherence = 0.5753
+  🔹 Topic 1: sensitive_skin, first_time, simple_routine, many_active, extra_hydration, same_vibe, closed_comedo, same_kind
+  🔹 Topic 2: less_dewy, former_toner, much_moisture, red_dot, mild_rosacea, slight_difference, bumpy_texture, entire_bottle
+  🔹 Topic 3: sensitive_skin, oily_skin, high_hope, tik_tok, prone_skin, left_chemical, micellar_water, dry_skin
+  🔹 Topic 4: sensitive_skin, changed_ingredient, new_smell, different_smell, old_bottle, new_bottle, new_ingredient, more_breakout
+  🔹 Topic 5: sensitive_skin, same_toner, second_try, irritated_skin, authentic_anua, new_product, most_toner, strong_scent
+  🔹 Topic 6: painful_cyst, hylauronic_acid, fine_preexisting, oily_skin, radiant_skin, tik_tok, next_couple, first_couple
+
+⭐ Rating 3 | Optimal K = 6 | Coherence = 0.6547
+  🔹 Topic 1: much_exfoliation, dehydrated_skin, humid_climate, korean_skincare, light_side, well_value, korean_toner, social_medium
+  🔹 Topic 2: hyloronic_acid, clear_skin, damaged_skin, third_bottle, dry_state, other_skincare, oral_treatment, daily_moisturizer
+  🔹 Topic 3: prone_skin, right_product, strange_residue, sensitive_skin, other_toner, clear_skin, big_fan, more_glowy
+  🔹 Topic 4: much_change, other_toner, well_toner, ordinary_product, horrible_breakout, much_people, only_anua, long_time
+  🔹 Topic 5: sensitive_skin, fair_shot, entire_bottle, initial_review, just_water, new_product, many_time, significant_breakout
+  🔹 Topic 6: prone_skin, clean_feeling, regular_brand, okay_product, most_toner, amazing_thing, several_time, little_bit
+
+⭐ Rating 4 | Optimal K = 6 | Coherence = 0.6030
+  🔹 Topic 1: prone_skin, jumbo_size, normal_size, poor_delivery, major_breakout, sensitive_acne, sensitive_skin, little_bit
+  🔹 Topic 2: only_complaint, appropriate_amount, many_time, sensitive_skin, prone_skin, little_bit, other_toner, good_beginner
+  🔹 Topic 3: sensitive_skin, past_year, asian_beauty, current_bottle, different_toner, dry_skin, new_skincare, much_difference
+  🔹 Topic 4: combo_skin, good_amount, prone_skin, sensitive_skin, good_base, good_review, sentive_acne, massive_change
+  🔹 Topic 5: great_toner, whole_bottle, 2nd_order, great_ingredient, second_time, little_redness, everyday_routine, great_base
+  🔹 Topic 6: korean_brand, stinging_sensation, memorable_product, new_pimple, next_day, og_toner, sensitive_skin, natural_scent
+
+⭐ Rating 5 | Optimal K = 2 | Coherence = 0.5454
+  🔹 Topic 1: sensitive_skin, irritated_skin, stubborn_sebum, new_packaging, korean_skin, long_time, watery_consistency, good_thing
+  🔹 Topic 2: sensitive_skin, other_product, natural_ingredient, first_step, few_week, harsh_chemical, consistent_use, final_thought

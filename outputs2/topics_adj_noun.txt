@@ -1,0 +1,22 @@
+==== ADJ_NOUN ====
+
+⭐ Rating 1 | Optimal K = 2 | Coherence = 0.6057
+  🔹 Topic 1: sensitive_skin, double_cleansing, cystic_acne, hormonal_acne, dry_skin, next_day, clogged_pore, positive_review
+  🔹 Topic 2: prone_skin, black_head, clear_skin, social_medium, red_pimple, oily_skin, tiny_bump, first_use
+
+⭐ Rating 2 | Optimal K = 2 | Coherence = 0.5936
+  🔹 Topic 1: hormonal_acne, clogged_pore, prone_skin, positive_review, bad_acne, sensitive_skin, good_review, sensative_skin
+  🔹 Topic 2: prone_skin, oily_skin, dry_skin, double_cleansing, double_cleanse, next_day, small_breakout, high_hope
+
+⭐ Rating 3 | Optimal K = 3 | Coherence = 0.5135
+  🔹 Topic 1: other_oil, dry_skin, double_cleansing, few_week, more_pimple, other_review, oily_skin, same_thing
+  🔹 Topic 2: sebaceous_filament, sensitive_skin, first_time, clogged_pore, great_job, tiny_bump, other_cleanser, prone_skin
+  🔹 Topic 3: prone_skin, sebaceous_filament, new_version, active_ingredient, old_version, bad_skin, other_face, only_cleanser
+
+⭐ Rating 4 | Optimal K = 2 | Coherence = 0.4748
+  🔹 Topic 1: double_cleansing, sebaceous_filament, combo_skin, double_cleanse, large_pore, other_review, clogged_pore, thin_oil
+  🔹 Topic 2: sensitive_skin, prone_skin, sebaceous_filament, good_oil, gentle_formula, first_time, few_week, normal_cleanser
+
+⭐ Rating 5 | Optimal K = 2 | Coherence = 0.4938
+  🔹 Topic 1: sensitive_skin, prone_skin, pore_care, few_day, dry_skin, korean_skincare, effective_cleansing, natural_oil
+  🔹 Topic 2: pore_cleansing, sebaceous_filament, oily_skin, double_cleansing, deep_cleansing, first_time, noticeable_difference, first_use

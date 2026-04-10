@@ -1,0 +1,26 @@
+==== BIGRAM ====
+
+⭐ Rating 1 | Optimal K = 3 | Coherence = 0.5859
+  🔹 Topic 1: fungal_acne, sebaceous_filament, start_get, start_break, small_bump, red_pimple, acne_scar, red_bump
+  🔹 Topic 2: cystic_acne, acne_prone, week_start, hormonal_acne, break_bad, look_like, read_review, start_clear
+  🔹 Topic 3: cystic_acne, break_like, get_bad, acne_like, acne_prone, like_life, decide_try, nose_chin
+
+⭐ Rating 2 | Optimal K = 2 | Coherence = 0.5801
+  🔹 Topic 1: acne_prone, remove_makeup, bad_acne, cause_breakout, double_cleanse, makeup_remover, water_base, feel_like_like
+  🔹 Topic 2: acne_prone, feel_like_like, pore_clog, remove_makeup, water_base, routine_week, dry_acne, try_week
+
+⭐ Rating 3 | Optimal K = 4 | Coherence = 0.5850
+  🔹 Topic 1: remove_makeup, think_work, couple_day, take_makeup, reduce_acne, help_reduce, waterproof_mascara, makeup_leave
+  🔹 Topic 2: feel_like_like, remove_makeup, break_out, old_version, new_version, double_cleanse, good_expect, positive_review
+  🔹 Topic 3: sebaceous_filament, feel_like_like, rid_sebaceous, shower_wash, feel_a_little, makeup_include, acne_prone, spend_money
+  🔹 Topic 4: acne_prone, feel_like_like, remove_makeup, feel_clean_clean, sadly_break, start_break, clogged_pore, sensitive_acne
+
+⭐ Rating 4 | Optimal K = 3 | Coherence = 0.5578
+  🔹 Topic 1: leave_soft, eye_makeup, smell_good, like_maybe, good_leave, ad_good, try_different, day_help
+  🔹 Topic 2: sebaceous_filament, acne_prone, remove_makeup, pore_control, skincare_routine, makeup_dirt, leave_oily, sensitive_acne
+  🔹 Topic 3: feel_like_like, makeup_remover, remove_makeup, double_cleanse, shrink_pore, notice_difference, feel_clean_clean, feel_soft_soft
+
+⭐ Rating 5 | Optimal K = 3 | Coherence = 0.5394
+  🔹 Topic 1: work_great, double_cleanse, feel_clean_clean, clean_pore, remove_makeup, pore_deep, recommend_wash, deep_foam
+  🔹 Topic 2: pore_look, away_makeup, melt_away, work_wonder, soft_smooth, actually_work, look_small, gentle_effective
+  🔹 Topic 3: remove_makeup, skincare_routine, leave_greasy, highly_recommend, pore_control, makeup_sunscreen, acne_prone, greasy_residue

@@ -352,6 +352,7 @@ For low-rating reviews (★1–2), the near-absence of UP recovery in the toner 
 VADER-based scoring (v2) produces longer, more stable segments than the simple sign-lexicon (v1), confirming that sentiment backend quality directly impacts trend extraction reliability.
 
 > **Business implication**: The DOWN-before-verdict structure in high-rating reviews suggests that satisfied customers frequently overcome an initial concern before reaching satisfaction. Proactive communication addressing the most common early-stage concerns (e.g. purging, adjustment period, skin-type fit) — particularly at the point of TikTok or SNS discovery — could reduce early abandonment before the positive outcome is reached. For low-rating toner reviews, the absence of any sentiment recovery indicates structural dissatisfaction (not just a rough start), requiring product-level or communication-level intervention rather than retention messaging alone.
+> Specifically, a targeted post-purchase communication sequence within the first 3–5 days — addressing purging, skin adjustment periods, and skin-type-specific usage guidance — could convert early-stage dropouts into satisfied customers, particularly for the sensitive skin segments identified in Finding 5. For toner low-rating reviews, where no sentiment recovery exists, the intervention point should be pre-purchase: aligning TikTok and SNS content with realistic product expectations for acne-prone sensitive skin (see Finding 4 and Finding 5) rather than post-purchase retention messaging.
 
 ---
 

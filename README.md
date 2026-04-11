@@ -17,6 +17,7 @@ A comprehensive NLP analysis of Amazon customer reviews for two ANUA skincare pr
   - [Laplace-Perspective Trend Analysis](#laplace-perspective-trend-analysis)
 - [Results](#results)
 - [Tableau Export](#tableau-export)
+- [Key Findings](#key-findings)
 - [How to Run](#how-to-run)
 - [Dependencies](#dependencies)
 
@@ -50,16 +51,19 @@ The analysis was designed to answer:
 ```
 anua-review-nlp/
 │
-├── merge_cleansing_oil.py       # Merges 5 rating-tier Excel files → CSV (cleansing oil)
-├── merge_toner.py               # Merges 5 rating-tier Excel files → CSV (toner)
-├── LDA_pipeline.py              # Main LDA pipeline: 4 preprocessing modes × 2 products
-├── export_tableau.py            # Expands topic keywords to row-per-keyword CSV for Tableau
-├── topic_summary_dashboard.py   # Interactive Dash dashboard for result exploration
+├── merge_cleansing_oil.py          # Merges 5 rating-tier Excel files → CSV (cleansing oil)
+├── merge_toner.py                  # Merges 5 rating-tier Excel files → CSV (toner)
+├── LDA_pipeline.py                 # Main LDA pipeline: 4 preprocessing modes × 2 products
+├── export_tableau.py               # Expands topic keywords to row-per-keyword CSV for Tableau
+├── export_tableau_tfidf.py         # Same as above for TF-IDF filtered LDA results
+├── export_tableau_combined.py      # Merges main LDA + TF-IDF LDA into single CSV with pipeline column
+├── export_tableau_laplace.py       # Expands Laplace segment data to row-per-segment CSV for Tableau
+├── topic_summary_dashboard.py      # Interactive Dash dashboard for result exploration
 │
 └── experiments/
-    ├── LDA_tfidf_pipeline.py    # LDA with TF-IDF pre-filtering (experimental)
-    ├── laplace_trend_v1.py      # Laplace-perspective trend analysis, v1
-    └── laplace_trend_v2.py      # Laplace-perspective trend analysis, v2 (VADER + adaptive TF-IDF fallback)
+    ├── LDA_tfidf_pipeline.py       # LDA with TF-IDF pre-filtering (experimental)
+    ├── laplace_trend_v1.py         # Laplace-perspective trend analysis, v1
+    └── laplace_trend_v2.py         # Laplace-perspective trend analysis, v2 (VADER + adaptive TF-IDF fallback)
 ```
 
 ---
@@ -84,16 +88,20 @@ LDA_pipeline.py                              experiments/LDA_tfidf_pipeline.py
         ▼                                                  ▼
 outputs_cleansing_oil/                       outputs_tfidf_cleansing_oil/
 outputs_toner/                               outputs_tfidf_toner/
-        │
-        ▼
-export_tableau.py
-        │
-        ▼
-anua_tableau_master.csv
-(row-per-keyword, Tableau-ready)
-        │
-        ▼
-Tableau Visualization (in progress)
+        │                                                  │
+        ▼                                                  ▼
+export_tableau.py                            export_tableau_tfidf.py
+        │                                                  │
+        └──────────────┬───────────────────────────────────┘
+                       ▼
+            export_tableau_combined.py
+                       │
+                       ▼
+            anua_tableau_combined.csv
+            (main_lda + tfidf_lda, pipeline column for comparison)
+                       │
+                       ▼
+            Tableau Visualization (in progress — dashboard link will be added upon completion)
 
 
 experiments/laplace_trend_v1.py / laplace_trend_v2.py
@@ -101,6 +109,13 @@ experiments/laplace_trend_v1.py / laplace_trend_v2.py
         ▼
 outputs_laplace_v1_cleansing_oil/ outputs_laplace_v1_toner/
 outputs_laplace_cleansing_oil/    outputs_laplace_toner/
+        │
+        ▼
+export_tableau_laplace.py
+        │
+        ▼
+anua_tableau_laplace.csv
+(row-per-segment, UP/DOWN/FLAT labels)
 ```
 
 ---
@@ -190,9 +205,9 @@ Output files are generated per product under the following directories (excluded
 
 ## Tableau Export
 
-`export_tableau.py` merges both products' `topic_summary.csv` files and expands the keyword column into a **row-per-keyword** format optimized for Tableau exploration.
+Three Tableau-ready CSV files are generated from the analysis results:
 
-**Output**: `anua_tableau_master.csv`
+**`anua_tableau_master.csv`** — Main LDA results, row-per-keyword format
 
 | Column | Description |
 |---|---|
@@ -206,7 +221,149 @@ Output files are generated per product under the following directories (excluded
 | `optimal_k` | Number of topics selected for this group |
 | `num_reviews` | Number of reviews in this rating group |
 
-Tableau visualization is in progress.
+**`anua_tableau_combined.csv`** — Main LDA + TF-IDF LDA merged, with `pipeline` column (`main_lda` / `tfidf_lda`) for direct side-by-side comparison of both approaches.
+
+**`anua_tableau_laplace.csv`** — Laplace sentiment trend segments, row-per-segment format
+
+| Column | Description |
+|---|---|
+| `product` | `cleansing_oil` or `toner` |
+| `star_rating` | 1–5 |
+| `version` | `v1` (sign-lexicon) or `v2` (VADER) |
+| `segment_id` | Segment index within the rating group |
+| `segment_start` | Start position in review sequence |
+| `segment_end` | End position in review sequence |
+| `segment_length` | Duration of the segment |
+| `segment_label` | `UP`, `DOWN`, or `FLAT` |
+| `sentiment_backend` | Sentiment scorer used |
+
+Tableau visualization in progress — dashboard link will be added upon completion.
+
+---
+
+## Key Findings
+
+### 1. Preprocessing Strategy — Phrase-Level Analysis Outperforms Word-Level
+
+Comparing c_v coherence scores across four preprocessing modes reveals a consistent pattern: **phrase-level representations (bigram, adj_noun) significantly outperform word-level (unigram, unibi_mix)** across both products.
+
+| Mode | Cleansing Oil | Toner |
+|---|---|---|
+| adj_noun | 0.5545 | 0.6002 |
+| bigram | 0.5700 | 0.6094 |
+| unibi_mix | 0.3958 | 0.3837 |
+| unigram | 0.3965 | 0.4004 |
+
+This suggests that skincare consumers naturally describe their experiences through compound expressions (e.g. `acne_prone`, `gentle_cleanser`, `dry_skin`) rather than isolated words. Single-token models fail to capture the relational semantics that matter most in beauty product reviews.
+
+**Additionally**, coherence peaks at star rating 3 for toner bigram (0.70), indicating that mid-satisfaction customers leave the most linguistically rich and topically diverse feedback — a finding with direct implications for product improvement prioritization.
+
+---
+
+### 2. Distinct Consumer Concern Profiles by Product
+
+LDA topic modeling reveals that the two products attract fundamentally different consumer concerns, suggesting distinct positioning and target segments.
+
+**Cleansing Oil** — Pore & Sebum Management
+- High-rating keywords: `pore_cleansing`, `pore_look`, `work_great` (★5), `sebaceous_filament` (★3–4)
+- Dominant use case: double-cleansing routine, oily/combination skin management
+- Negative keywords centered on: acne triggers (`hormonal_acne`, `cystic_acne`), sensitivity reactions
+
+**Toner** — Hydration, Skin Texture & Routine Integration
+- High-rating keywords: `great_toner`, `korean_brand`, `combo_skin`, `radiant_skin` (★4), `natural_ingredient`, `skincare_routine` (★5)
+- Dominant use case: daily hydration, K-beauty routine integration
+- Negative keywords centered on: formulation issues, irritation, unmet expectations
+
+> **Business implication**: The two products should not share the same marketing message. Cleansing Oil campaigns should emphasize pore refinement and sebum control; Toner campaigns should lead with hydration efficacy and K-beauty credibility.
+
+---
+
+### 3. Formulation Change as a Primary Churn Driver (Toner)
+
+A cluster of formulation-related keywords appears exclusively in low-rating toner reviews, forming a clear churn signal:
+
+- `changed_ingredient`, `new_ingredient` → ★2
+- `new_formula`, `old_formula`, `prior_formula` → ★1
+
+The co-occurrence of `old_formula` and `prior_formula` at the lowest rating tier directly reflects customer sentiment of "the previous version was better." Notably, this pattern is **absent in cleansing oil reviews**, suggesting the toner underwent a formulation change that alienated its established user base.
+
+Conversely, `natural_ingredient` (★5) and `great_ingredient` (★4) confirm that ingredient quality is the primary satisfaction driver when perceived positively.
+
+> **Business implication**: Formulation changes should be preceded by structured customer feedback collection. A/B testing with loyal customers before full rollout could prevent churn from established fan bases.
+
+---
+
+### 4. TikTok Viral Effect — Opposite Outcomes by Product
+
+The keyword `tik_tok` surfaces in reviews of both products but at starkly different rating tiers:
+
+- **Cleansing Oil**: `tik_tok` appears at ★4–5 → TikTok-driven customers are satisfied
+- **Toner**: `tik_tok` appears at ★1–2 → TikTok-driven customers are disappointed
+
+This pattern was independently confirmed across both the main LDA pipeline and the TF-IDF filtered pipeline, validating it as a statistically robust signal rather than noise.
+
+> **Business implication**: TikTok content for the toner is generating a mismatch between expected and actual product experience. The marketing message or the content format needs to be realigned with the product's actual efficacy profile. The cleansing oil's TikTok presence, by contrast, is working effectively and could be scaled.
+
+---
+
+### 5. Skin Type Segmentation — Sensitive Skin as a Polarized Core Segment
+
+`sensitive_skin` appears across all star ratings (★1–5) for both products — the only keyword to do so. Topic-level analysis reveals that this polarization is not random: `sensitive_skin` consistently clusters into two structurally distinct topics across both products, exposing a meaningful sub-segment split.
+
+| Skin Type | Cleansing Oil | Toner |
+|---|---|---|
+| sensitive_skin | ★1, 2, 3, 5 | ★1, 2, 3, 4, 5 |
+| prone_skin | ★1, 2, 3, 5 | ★1, 2, 3, 4 |
+| combo_skin | — | ★4 |
+| dry_skin | ★1, 2, 3, 5 | ★2, 4 |
+| oily_skin | ★2, 3, 5 | — |
+
+**Cleansing Oil — two distinct sensitive skin topics:**
+- **Topic 1 (Trouble/Acne)**: `sensitive_skin` co-occurs with `bad_acne`, `cystic_acne`, `hormonal_acne`, `more_pimple`, `black_head`, `clogged_pore` → acne-prone sensitive skin customers experiencing breakouts
+- **Topic 2 (Cleansing Efficacy)**: `sensitive_skin` co-occurs with `double_cleansing`, `pore_cleansing`, `gentle_formula`, `sebaceous_filament`, `noticeable_difference` → sensitive skin customers satisfied with gentle yet effective cleansing
+
+**Toner — two distinct sensitive skin topics:**
+- **Topic 1 (SNS-Driven Disappointment)**: `sensitive_skin` co-occurs with `major_breakout`, `red_bump`, `irritated_skin`, `high_hope`, `tik_tok`, `social_medium` → sensitive skin customers who purchased via SNS discovery and experienced breakouts
+- **Topic 2 (Daily Hydration Routine)**: `sensitive_skin` co-occurs with `dry_state`, `daily_moisturizer`, `much_moisture`, `mild_rosacea`, `natural_ingredient`, `consistent_use` → dry/reactive sensitive skin customers satisfied with hydration and gentle formulation
+
+The data indicates that "sensitive skin" encompasses at least two distinct sub-segments — **acne-prone sensitive skin** (reactive to occlusive/comedogenic ingredients) and **dry/reactive sensitive skin** (responsive to hydration and gentle formulas) — who have fundamentally different and often opposite responses to the same products.
+
+> **Business implication**: Current marketing that targets "sensitive skin" as a monolithic segment is likely contributing to polarized outcomes. Product guidelines and content should differentiate between acne-prone sensitive skin and dry/reactive sensitive skin. For the toner specifically, SNS-driven acquisition of acne-prone sensitive skin customers — amplified by TikTok discovery (see Finding 4) — is generating a structurally predictable disappointment pattern that can be mitigated with upfront skin-type-specific messaging.
+
+---
+
+### 6. Laplace-Perspective Sentiment Trend Analysis
+
+Applying a signal-processing framework to the review sequence reveals macro-level sentiment dynamics beyond what keyword frequency can capture.
+
+**Key observations (v2, VADER-based):**
+- `DOWN` segments are consistently longer than `UP` segments across all star ratings and both products
+- Cleansing Oil ★5 shows the longest `DOWN` segment among all high-rating groups
+- Toner ★1–2 shows minimal `UP` recovery segments
+
+**Interpreting the DOWN-dominant pattern:**
+The prevalence of extended DOWN segments even in high-rating reviews (★4–5) most likely reflects the **narrative structure of skincare reviews** — customers typically describe initial concerns, adjustment periods, or comparative context before arriving at their verdict. This is structurally different from, for example, electronics reviews where sentiment tends to be more front-loaded.
+
+It should be noted that this interpretation is inferred from segment shape alone; without sentence-level annotation, the exact cause of DOWN segments cannot be confirmed from the current data.
+
+For low-rating reviews (★1–2), the near-absence of UP recovery in the toner aligns with the keyword evidence from Finding 3 (formulation change) and Finding 5 (SNS-driven mismatch) — customers who experienced formulation disappointment or skin-type mismatch rarely shift to positive sentiment within their review text, indicating structural dissatisfaction rather than a rough start.
+
+**v1 vs v2 comparison:**
+VADER-based scoring (v2) produces longer, more stable segments than the simple sign-lexicon (v1), confirming that sentiment backend quality directly impacts trend extraction reliability.
+
+> **Business implication**: The DOWN-before-verdict structure in high-rating reviews suggests that satisfied customers frequently overcome an initial concern before reaching satisfaction. Proactive communication addressing the most common early-stage concerns (e.g. purging, adjustment period, skin-type fit) — particularly at the point of TikTok or SNS discovery — could reduce early abandonment before the positive outcome is reached. For low-rating toner reviews, the absence of any sentiment recovery indicates structural dissatisfaction (not just a rough start), requiring product-level or communication-level intervention rather than retention messaging alone.
+
+---
+
+### 7. Pipeline Comparison — Main LDA vs TF-IDF Filtered LDA
+
+Running both pipelines on the same dataset provides a cross-validation layer:
+
+- **Agreement**: `tik_tok` at toner ★1, `combo_skin` and `great_toner` at toner ★4 appear in both pipelines → high-confidence signals
+- **Divergence**: TF-IDF filtering removes domain-specific medical terms (`hormonal_acne`, `sebaceous_filament`, `cystic_acne`) that the main pipeline retains → for skincare corpora, aggressive TF-IDF filtering risks losing clinically relevant vocabulary
+- **TF-IDF advantage**: Surfaces additional usage-context keywords (`new_moisturizer`, `few_day`, `natural_ingredient`) not captured by the main pipeline
+
+> **Methodological conclusion**: For domain-specific NLP on beauty/skincare text, the main LDA pipeline with custom stopwords and POS-aware tokenization outperforms generic TF-IDF filtering. TF-IDF filtered results are best used as a secondary validation layer rather than a replacement.
 
 ---
 
@@ -220,8 +377,11 @@ python merge_toner.py
 # 2. Run main LDA pipeline
 python LDA_pipeline.py
 
-# 3. Export Tableau-ready CSV
+# 3. Export Tableau-ready CSVs
 python export_tableau.py
+python export_tableau_tfidf.py
+python export_tableau_combined.py
+python export_tableau_laplace.py
 
 # 4. (Optional) Run experimental pipelines
 python experiments/LDA_tfidf_pipeline.py

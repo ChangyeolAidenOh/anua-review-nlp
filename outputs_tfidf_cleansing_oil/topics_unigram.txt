@@ -1,0 +1,28 @@
+==== CLEANSING_OIL | UNIGRAM ====
+
+Star Rating 1 | Optimal K = 2 | Coherence = 0.3891
+  Topic 1: acne, start, break, sensitive, like, bad, day, recommend
+  Topic 2: acne, like, buy, week, break, bad, pore, month
+
+Star Rating 2 | Optimal K = 2 | Coherence = 0.4570
+  Topic 1: acne, break, makeup, try, cause, remove, good, like
+  Topic 2: acne, like, week, break, feel, work, buy, start
+
+Star Rating 3 | Optimal K = 3 | Coherence = 0.4245
+  Topic 1: like, feel, pore, break, work, think, help, acne
+  Topic 2: break, work, like, smell, good, buy, feel, try
+  Topic 3: eye, cleanse, remove, mascara, makeup, smell, good, try
+
+Star Rating 4 | Optimal K = 6 | Coherence = 0.4552
+  Topic 1: like, smell, blackhead, clear, oily, appear, love, star
+  Topic 2: like, time, good, pore, smell, wash, buy, feel
+  Topic 3: makeup, like, leave, cleanse, try, love, remove, great
+  Topic 4: remove, makeup, feel, leave, pore, clean, good, routine
+  Topic 5: pore, good, makeup, like, try, eye, help, pump
+  Topic 6: break, great, sensitive, makeup, cause, double, dirt, sure
+
+Star Rating 5 | Optimal K = 4 | Coherence = 0.4540
+  Topic 1: leave, makeup, feel, love, pore, remove, greasy, clean
+  Topic 2: good, day, pore, clean, think, oily, work, time
+  Topic 3: look, pore, soft, routine, decide, problem, glow, follow
+  Topic 4: pore, great, feel, clean, work, good, wash, makeup

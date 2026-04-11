@@ -1,0 +1,24 @@
+==== TONER | UNIBI_MIX ====
+
+Star Rating 1 | Optimal K = 2 | Coherence = 0.4471
+  Topic 1: like, acne, sensitive, feel, bad, water, buy, look
+  Topic 2: break, day, acne, like, try, start, feel, breakout
+
+Star Rating 2 | Optimal K = 3 | Coherence = 0.3617
+  Topic 1: sensitive, break, soothe, bad, good, want, dry, bottle
+  Topic 2: like, feel, water, month, scent, feel_like, day, difference
+  Topic 3: feel, like, sensitive, difference, good, feel_like, water, try
+
+Star Rating 3 | Optimal K = 2 | Coherence = 0.4756
+  Topic 1: acne, help, prone, think, feel, buy, little, acne_prone
+  Topic 2: feel, like, feel_like, water, work, sensitive, break, notice
+
+Star Rating 4 | Optimal K = 2 | Coherence = 0.3532
+  Topic 1: like, good, feel, hydrate, sensitive, soothe, love, acne
+  Topic 2: great, good, like, work, skincare, dry, routine, love
+
+Star Rating 5 | Optimal K = 4 | Coherence = 0.4076
+  Topic 1: soothe, feel, look, recommend, sensitive, routine, help, gentle
+  Topic 2: like, look, love, feel, work, sensitive, time, bottle
+  Topic 3: feel, routine, love, buy, definitely, good, leave, try
+  Topic 4: sensitive, skincare, love, like, feel, soothe, natural, completely

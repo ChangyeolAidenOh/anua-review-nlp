@@ -62,65 +62,80 @@ def find_optimal_k(texts, dictionary, corpus, mode, rating, output_dir, min_k=2,
 
 # === Main ===
 if __name__ == "__main__":
-    df = pd.read_csv("../anua_cleansing_oil_reviews.csv")
-    output_dir = "../outputs2"
-    os.makedirs(output_dir, exist_ok=True)
+    products = [
+        ("cleansing_oil", "../anua_cleansing_oil_reviews.csv"),
+        ("toner",         "../anua_toner_reviews.csv"),
+    ]
 
-    summary_rows = []
+    for product_name, file_path in products:
+        print(f"\n{'='*50}\n▶ Processing: {product_name}\n{'='*50}")
 
-    for mode_name, preprocess_func in preprocessing_modes.items():
-        with open(f"{output_dir}/topics_{mode_name}.txt", "w", encoding="utf-8") as f_out:
-            f_out.write(f"==== {mode_name.upper()} ====\n")
+        df = pd.read_csv(file_path)
+        output_dir = f"../outputs_tfidf_{product_name}"
+        os.makedirs(output_dir, exist_ok=True)
 
-            for rating in range(1, 6):
-                subset = df[df["rating"] == rating]["Review Content"].dropna()
-                texts = subset.apply(preprocess_func).tolist()
-                texts = [t for t in texts if len(t) >= 3]
+        summary_rows = []
 
-                if not texts or sum(len(t) for t in texts) == 0:
-                    f_out.write(f"\nStar Rating {rating}: No valid reviews\n")
-                    continue
+        for mode_name, preprocess_func in preprocessing_modes.items():
+            print(f"\n  [Mode: {mode_name}]")
 
-                try:
-                    # Apply TF-IDF word selection to filter low-signal tokens before LDA
-                    joined_docs = [" ".join(t) for t in texts]
-                    vectorizer = TfidfVectorizer(
-                        min_df=1,
-                        max_df=0.95,
-                        max_features=3000,
-                        stop_words="english"
-                    )
-                    tfidf_matrix = vectorizer.fit_transform(joined_docs)
-                    selected_words = set(vectorizer.get_feature_names_out())
-                    texts = [[word for word in doc if word in selected_words] for doc in texts]
+            with open(f"{output_dir}/topics_{mode_name}.txt", "w", encoding="utf-8") as f_out:
+                f_out.write(f"==== {product_name.upper()} | {mode_name.upper()} ====\n")
 
-                    dictionary = corpora.Dictionary(texts)
-                    corpus = [dictionary.doc2bow(text) for text in texts]
+                for rating in range(1, 6):
+                    subset = df[df["rating"] == rating]["Review Content"].dropna()
+                    texts = subset.apply(preprocess_func).tolist()
+                    texts = [t for t in texts if len(t) >= 3]
 
-                    if len(corpus) == 0:
-                        f_out.write(f"\nStar Rating {rating}: Skipped due to empty corpus after TF-IDF filtering\n")
+                    if not texts or sum(len(t) for t in texts) == 0:
+                        f_out.write(f"\nStar Rating {rating}: No valid reviews\n")
                         continue
 
-                    optimal_k, best_score = find_optimal_k(texts, dictionary, corpus, mode_name, rating, output_dir)
-                    f_out.write(f"\nStar Rating {rating} | Optimal K = {optimal_k} | Coherence = {best_score:.4f}\n")
+                    try:
+                        # Apply TF-IDF word selection to filter low-signal tokens before LDA
+                        joined_docs = [" ".join(t) for t in texts]
+                        vectorizer = TfidfVectorizer(
+                            min_df=1,
+                            max_df=0.95,
+                            max_features=3000,
+                            stop_words="english"
+                        )
+                        tfidf_matrix = vectorizer.fit_transform(joined_docs)
+                        selected_words = set(vectorizer.get_feature_names_out())
+                        texts = [[word for word in doc if word in selected_words] for doc in texts]
 
-                    model = LdaModel(corpus=corpus, id2word=dictionary, num_topics=optimal_k, passes=15, random_state=42)
-                    keywords = []
-                    for i, topic in model.show_topics(num_topics=optimal_k, num_words=8, formatted=False):
-                        topic_words = ", ".join([word for word, _ in topic])
-                        f_out.write(f"  Topic {i + 1}: {topic_words}\n")
-                        keywords.append(topic_words)
+                        dictionary = corpora.Dictionary(texts)
+                        corpus = [dictionary.doc2bow(text) for text in texts]
 
-                    summary_rows.append({
-                        "mode":        mode_name,
-                        "rating":      rating,
-                        "optimal_k":   optimal_k,
-                        "coherence":   round(best_score, 4),
-                        "num_reviews": len(texts),
-                        "keywords":    " | ".join(keywords)
-                    })
+                        if len(corpus) == 0:
+                            f_out.write(f"\nStar Rating {rating}: Skipped due to empty corpus after TF-IDF filtering\n")
+                            continue
 
-                except Exception as e:
-                    f_out.write(f"\nRating {rating}: Error occurred - {e}\n")
+                        optimal_k, best_score = find_optimal_k(texts, dictionary, corpus, mode_name, rating, output_dir)
+                        f_out.write(f"\nStar Rating {rating} | Optimal K = {optimal_k} | Coherence = {best_score:.4f}\n")
 
-    pd.DataFrame(summary_rows).to_csv(f"{output_dir}/topic_summary.csv", index=False)
+                        model = LdaModel(corpus=corpus, id2word=dictionary, num_topics=optimal_k, passes=15, random_state=42)
+                        keywords = []
+                        for i, topic in model.show_topics(num_topics=optimal_k, num_words=8, formatted=False):
+                            topic_words = ", ".join([word for word, _ in topic])
+                            f_out.write(f"  Topic {i + 1}: {topic_words}\n")
+                            keywords.append(topic_words)
+
+                        summary_rows.append({
+                            "product":     product_name,
+                            "mode":        mode_name,
+                            "rating":      rating,
+                            "optimal_k":   optimal_k,
+                            "coherence":   round(best_score, 4),
+                            "num_reviews": len(texts),
+                            "keywords":    " | ".join(keywords)
+                        })
+
+                        print(f"    Star rating {rating} → k={optimal_k}, coherence={best_score:.4f}")
+
+                    except Exception as e:
+                        f_out.write(f"\nRating {rating}: Error occurred - {e}\n")
+                        print(f"      Rating {rating}: Error - {e}")
+
+        pd.DataFrame(summary_rows).to_csv(f"{output_dir}/topic_summary.csv", index=False)
+        print(f"\n  Result saved: {output_dir}/topic_summary.csv")

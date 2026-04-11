@@ -302,12 +302,14 @@ class LaplaceTextTrend:
 # Usage example
 # =========================
 if __name__ == "__main__":
-    docs = [
-        "Battery life is amazing and the build quality feels premium.",
-        "Terrible packaging; the item arrived broken. Very disappointed.",
-        "Sound is good, but the Bluetooth connection drops occasionally.",
-        "Excellent value for money. Works perfectly for my daily commute.",
-        "Strong plastic smell at first, but it faded after a day."
+    import pandas as pd
+    import os
+    import json
+
+    # Load review data
+    products = [
+        ("cleansing_oil", "../anua_cleansing_oil_reviews.csv"),
+        ("toner",         "../anua_toner_reviews.csv"),
     ]
 
     cfg = LaplaceTextTrendConfig(
@@ -324,13 +326,47 @@ if __name__ == "__main__":
         s_min=0.05, s_max=1.0, s_points=60
     )
 
-    pipe = LaplaceTextTrend(cfg)
-    out = pipe.run(docs)
+    for product_name, file_path in products:
+        print(f"\n{'='*50}\n▶ Processing: {product_name}\n{'='*50}")
 
-    # Result interpretation:
-    # - out["y_trend"]  : smooth trend extracted via low-pass filter (Laplace perspective)
-    # - out["segments"] : segment labels (UP / DOWN / FLAT)
-    # - out["laplace_F"]: Laplace transform of f_cont (diagnostic; higher s = more sensitive to high frequencies)
-    print("Sentiment backend:", out["meta"].get("sentiment_backend"))
-    print("TF-IDF meta:", {k: out["meta"][k] for k in out["meta"] if k.startswith("tfidf") or k.startswith("topic")})
-    print("Segments:", out["segments"])
+        df = pd.read_csv(file_path)
+        output_dir = f"../outputs_laplace_{product_name}"
+        os.makedirs(output_dir, exist_ok=True)
+
+        summary_rows = []
+
+        for rating in range(1, 6):
+            print(f"\n  Star rating {rating}")
+            subset = df[df["rating"] == rating]["Review Content"].dropna().tolist()
+
+            if len(subset) < 5:
+                print(f"    Skipped: not enough reviews ({len(subset)})")
+                continue
+
+            try:
+                pipe = LaplaceTextTrend(cfg)
+                out = pipe.run(subset)
+
+                # Save segment results
+                summary_rows.append({
+                    "product":   product_name,
+                    "rating":    rating,
+                    "n_reviews": len(subset),
+                    "segments":  str(out["segments"]),
+                    "sentiment_backend": out["meta"].get("sentiment_backend"),
+                    "topic_mode":        out["meta"].get("topic_mode"),
+                    "topic_components":  out["meta"].get("topic_components_effective"),
+                    "tfidf_vocab_size":  out["meta"].get("tfidf_vocab_size"),
+                })
+
+                print(f"    Segments: {out['segments']}")
+                print(f"    Sentiment backend: {out['meta'].get('sentiment_backend')}")
+
+            except Exception as e:
+                print(f"      Error: {e}")
+
+        # Save summary CSV
+        if summary_rows:
+            import pandas as pd
+            pd.DataFrame(summary_rows).to_csv(f"{output_dir}/laplace_summary.csv", index=False)
+            print(f"\n  Result saved: {output_dir}/laplace_summary.csv")

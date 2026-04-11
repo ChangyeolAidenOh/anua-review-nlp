@@ -1,3 +1,4 @@
+from __future__ import annotations
 """
 Laplace transformation in LLM detecting feature trends.
 - Raw text => Complex pattern => Categorized trend
@@ -16,7 +17,6 @@ Step 2 Continuous from the given discrete signal
      2. Spline / Gaussian : Spline interpolation
                           : Gaussian smoothing
 """
-
 import numpy as np
 from scipy.interpolate import interp1d
 
@@ -47,7 +47,7 @@ F_filtered = np.where(s_vals < 0.5, F_vals, 0)
 """
 Realistic Scaffold
 """
-from __future__ import annotations
+
 import re
 import numpy as np
 from dataclasses import dataclass
@@ -222,7 +222,7 @@ class LaplaceTextTrend:
             self.vectorizer = TfidfVectorizer(max_features=5000, ngram_range=(1,2), min_df=2)
             X = self.vectorizer.fit_transform(docs)  # (N, V)
             k = self.cfg.topic_components
-            self.nmf = NMF(n_components=k, init="nndsvda", random_state=42, max_iter=400)
+            self.nmf = NMF(n_components=k, init="nndsvda", random_state=42, max_iter=1000)
             W = self.nmf.fit_transform(X)  # (N, k): document x topic weights
 
             # Reduce topic matrix to a single scalar signal
@@ -295,32 +295,65 @@ class LaplaceTextTrend:
 # Usage example
 # =========================
 if __name__ == "__main__":
-    docs = [
-        "Great battery life and amazing build quality. Highly recommend.",
-        "Terrible packaging, item arrived broken, very disappointed.",
-        "Good sound but the connection is sometimes noisy.",
-        "Excellent value for the price. Perfect for my daily use.",
-        "Bad smell from the material, refund requested."
+    import pandas as pd
+    import os
+
+    # Load review data
+    products = [
+        ("cleansing_oil", "../anua_cleansing_oil_reviews.csv"),
+        ("toner",         "../anua_toner_reviews.csv"),
     ]
+
     cfg = LaplaceTextTrendConfig(
         use_sentiment=True,
         use_tfidf_topic=True,
         topic_components=6,
-        topic_to_signal="entropy",   # options: "dominant" / "pc1"
+        topic_to_signal="entropy",           # options: "dominant" / "pc1"
         signal_mix={"sentiment": 0.6, "topic": 0.4},
-        bandwidth=3.5,
-        tau=8.0,
-        order=2,
-        slope_thr=0.003,
-        sg_win=31,
-        sg_poly=2,
+        bandwidth=3.5,                       # recommended: 5~8
+        tau=8.0,                             # recommended: 10~20
+        order=2,                             # recommended: 2~3
+        slope_thr=0.003,                     # recommended: 0.002~0.004
+        sg_win=31, sg_poly=2,
         s_min=0.05, s_max=1.2, s_points=60
     )
-    pipe = LaplaceTextTrend(cfg)
-    out = pipe.run(docs)
 
-    # Result interpretation:
-    # - out["y_trend"]  : smooth trend extracted via low-pass filter (Laplace perspective)
-    # - out["segments"] : segment labels (UP / DOWN / FLAT)
-    # - out["laplace_F"]: Laplace transform of f_cont (diagnostic; higher s = more sensitive to high frequencies)
-    print("Segments:", out["segments"])
+    for product_name, file_path in products:
+        print(f"\n{'='*50}\n▶ Processing: {product_name}\n{'='*50}")
+
+        df = pd.read_csv(file_path)
+        output_dir = f"../outputs_laplace_v1_{product_name}"
+        os.makedirs(output_dir, exist_ok=True)
+
+        summary_rows = []
+
+        for rating in range(1, 6):
+            print(f"\n  Star Rating {rating}")
+            subset = df[df["rating"] == rating]["Review Content"].dropna().tolist()
+
+            if len(subset) < 5:
+                print(f"    Skipped: not enough reviews ({len(subset)})")
+                continue
+
+            try:
+                pipe = LaplaceTextTrend(cfg)
+                out = pipe.run(subset)
+
+                summary_rows.append({
+                    "product":         product_name,
+                    "rating":          rating,
+                    "n_reviews":       len(subset),
+                    "segments":        str(out["segments"]),
+                    "topic_mode":      out["meta"].get("topic_mode"),
+                    "sentiment_range": str(out["meta"].get("sentiment_range")),
+                })
+
+                print(f"    Segments: {out['segments']}")
+
+            except Exception as e:
+                print(f"     Error: {e}")
+
+        # Save summary CSV
+        if summary_rows:
+            pd.DataFrame(summary_rows).to_csv(f"{output_dir}/laplace_summary.csv", index=False)
+            print(f"\n  Result saved: {output_dir}/laplace_summary.csv")

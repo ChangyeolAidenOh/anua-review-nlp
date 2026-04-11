@@ -24,7 +24,7 @@ CUSTOM_STOPWORDS = {
 CONTEXT_VERBS = {"like", "feel"}
 
 
-# ── Preprocessing functions ───────────────────────────────────────────────────
+##### Preprocessing functions #####
 
 def get_tokens(text):
     """Lemmatized unigrams with POS-aware context verb handling."""
@@ -70,7 +70,7 @@ PREPROCESSING_MODES = {
 }
 
 
-# ── Topic modeling ────────────────────────────────────────────────────────────
+##### Topic modeling #####
 
 def find_optimal_k(texts, dictionary, corpus, mode, rating, output_dir, min_k=2, max_k=6):
     """
@@ -99,8 +99,8 @@ def find_optimal_k(texts, dictionary, corpus, mode, rating, output_dir, min_k=2,
     return best_k, best_score
 
 
-# ── Main pipeline ─────────────────────────────────────────────────────────────
 
+##### Main pipeline #####
 if __name__ == "__main__":
     products = [
         ("cleansing_oil", "anua_cleansing_oil_reviews.csv"),
@@ -128,7 +128,7 @@ if __name__ == "__main__":
                     texts = [t for t in texts if len(t) >= 3]
 
                     if not texts:
-                        f_out.write(f"\n⭐ Rating {rating}: No valid reviews\n")
+                        f_out.write(f"\n star Rating {rating}: No valid reviews\n")
                         continue
 
                     try:
@@ -144,7 +144,7 @@ if __name__ == "__main__":
                             num_topics=optimal_k, passes=15, random_state=42
                         )
 
-                        f_out.write(f"\n⭐ Rating {rating} | Optimal K = {optimal_k} | Coherence = {best_score:.4f}\n")
+                        f_out.write(f"\n star Rating {rating} | Optimal K = {optimal_k} | Coherence = {best_score:.4f}\n")
 
                         keywords = []
                         for i, topic in model.show_topics(num_topics=optimal_k, num_words=8, formatted=False):
@@ -162,11 +162,11 @@ if __name__ == "__main__":
                             "keywords":    " | ".join(keywords),
                         })
 
-                        print(f"    ⭐ Rating {rating} → k={optimal_k}, coherence={best_score:.4f}")
+                        print(f"     star Rating {rating} → k={optimal_k}, coherence={best_score:.4f}")
 
                     except Exception as e:
-                        f_out.write(f"\n⚠️ Rating {rating}: Error - {e}\n")
-                        print(f"    ⚠️ Rating {rating}: Error - {e}")
+                        f_out.write(f"\n Rating {rating}: Error - {e}\n")
+                        print(f"     Rating {rating}: Error - {e}")
 
         pd.DataFrame(summary_rows).to_csv(f"{output_dir}/topic_summary.csv", index=False)
-        print(f"\n  ✅ Saved: {output_dir}/topic_summary.csv")
+        print(f"\n   Saved: {output_dir}/topic_summary.csv")

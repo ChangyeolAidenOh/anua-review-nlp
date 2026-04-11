@@ -20,7 +20,7 @@ if __name__ == "__main__":
         dfs.append(df)
 
     if not dfs:
-        raise FileNotFoundError("No topic_summary.csv found. Run amazon_review.py first.")
+        raise FileNotFoundError("No topic_summary.csv found. Run LDA_pipeline.py first.")
 
     df_summary = pd.concat(dfs, ignore_index=True)
 

@@ -10,12 +10,12 @@ import numpy as np
 
 nlp = spacy.load("en_core_web_sm")
 
-# 사용자 정의 도메인 스톱워드 추가
+# Domain-specific stopwords for ANUA skincare reviews
 CUSTOM_STOPWORDS = {
     "product", "skin", "oil", "face", "anua", "heartleaf", "cleansing", "cleanser", "toner", "use"
 }
 
-# 전처리 함수들
+# Preprocessing functions
 def get_tokens(text):
     if pd.isnull(text): return []
     doc = nlp(text.lower())
@@ -32,13 +32,13 @@ def get_adj_noun(text):
             if token.pos_ == "ADJ" and doc[i + 1].pos_ == "NOUN"]
 
 preprocessing_modes = {
-    "unigram": lambda text: get_tokens(text),
-    "bigram": lambda text: get_bigrams(get_tokens(text)),
+    "unigram":   lambda text: get_tokens(text),
+    "bigram":    lambda text: get_bigrams(get_tokens(text)),
     "unibi_mix": lambda text: get_tokens(text) + get_bigrams(get_tokens(text)),
-    "adj_noun": lambda text: get_adj_noun(text)
+    "adj_noun":  lambda text: get_adj_noun(text)
 }
 
-# 최적 k 탐색 함수 + plot 저장
+# Search optimal k and save coherence plot
 def find_optimal_k(texts, dictionary, corpus, mode, rating, output_dir, min_k=2, max_k=6):
     scores = []
     for k in range(min_k, max_k + 1):
@@ -46,7 +46,7 @@ def find_optimal_k(texts, dictionary, corpus, mode, rating, output_dir, min_k=2,
         cm = CoherenceModel(model=lda, texts=texts, dictionary=dictionary, coherence='c_v')
         scores.append((k, cm.get_coherence()))
 
-    # plot 저장
+    # Save coherence plot
     plt.figure()
     ks, cvs = zip(*scores)
     plt.plot(ks, cvs, marker='o')
@@ -60,7 +60,7 @@ def find_optimal_k(texts, dictionary, corpus, mode, rating, output_dir, min_k=2,
     best_score = max(scores, key=lambda x: x[1])[1]
     return best_k, best_score
 
-# === 진입점 ===
+# === Main ===
 if __name__ == "__main__":
     df = pd.read_csv("../anua_cleansing_oil_reviews.csv")
     output_dir = "../outputs2"
@@ -78,11 +78,11 @@ if __name__ == "__main__":
                 texts = [t for t in texts if len(t) >= 3]
 
                 if not texts or sum(len(t) for t in texts) == 0:
-                    f_out.write(f"\n⭐ Rating {rating}: No valid reviews\n")
+                    f_out.write(f"\nStar Rating {rating}: No valid reviews\n")
                     continue
 
                 try:
-                    # TF-IDF 기반 단어 선택 적용
+                    # Apply TF-IDF word selection to filter low-signal tokens before LDA
                     joined_docs = [" ".join(t) for t in texts]
                     vectorizer = TfidfVectorizer(
                         min_df=1,
@@ -98,29 +98,29 @@ if __name__ == "__main__":
                     corpus = [dictionary.doc2bow(text) for text in texts]
 
                     if len(corpus) == 0:
-                        f_out.write(f"\n⭐ Rating {rating}: Skipped due to empty corpus after TF-IDF filtering\n")
+                        f_out.write(f"\nStar Rating {rating}: Skipped due to empty corpus after TF-IDF filtering\n")
                         continue
 
                     optimal_k, best_score = find_optimal_k(texts, dictionary, corpus, mode_name, rating, output_dir)
-                    f_out.write(f"\n⭐ Rating {rating} | Optimal K = {optimal_k} | Coherence = {best_score:.4f}\n")
+                    f_out.write(f"\nStar Rating {rating} | Optimal K = {optimal_k} | Coherence = {best_score:.4f}\n")
 
                     model = LdaModel(corpus=corpus, id2word=dictionary, num_topics=optimal_k, passes=15, random_state=42)
                     keywords = []
                     for i, topic in model.show_topics(num_topics=optimal_k, num_words=8, formatted=False):
                         topic_words = ", ".join([word for word, _ in topic])
-                        f_out.write(f"  🔹 Topic {i + 1}: {topic_words}\n")
+                        f_out.write(f"  Topic {i + 1}: {topic_words}\n")
                         keywords.append(topic_words)
 
                     summary_rows.append({
-                        "mode": mode_name,
-                        "rating": rating,
-                        "optimal_k": optimal_k,
-                        "coherence": round(best_score, 4),
+                        "mode":        mode_name,
+                        "rating":      rating,
+                        "optimal_k":   optimal_k,
+                        "coherence":   round(best_score, 4),
                         "num_reviews": len(texts),
-                        "keywords": " | ".join(keywords)
+                        "keywords":    " | ".join(keywords)
                     })
 
                 except Exception as e:
-                    f_out.write(f"\n⚠️ Rating {rating}: Error occurred - {e}\n")
+                    f_out.write(f"\nRating {rating}: Error occurred - {e}\n")
 
     pd.DataFrame(summary_rows).to_csv(f"{output_dir}/topic_summary.csv", index=False)

@@ -256,7 +256,7 @@ Comparing c_v coherence scores across four preprocessing modes reveals a consist
 
 This suggests that skincare consumers naturally describe their experiences through compound expressions (e.g. `acne_prone`, `gentle_cleanser`, `dry_skin`) rather than isolated words. Single-token models fail to capture the relational semantics that matter most in beauty product reviews.
 
-**Additionally**, coherence peaks at star rating 3 for toner bigram (0.70), indicating that mid-satisfaction customers leave the most linguistically rich and topically diverse feedback — a finding with direct implications for product improvement prioritization.
+**Additionally**, coherence peaks at star rating 3 for toner bigram (0.70), indicating that mid-satisfaction reviews yield the most topically separable structure — a finding with direct implications for product improvement prioritization.
 
 ---
 
@@ -285,7 +285,7 @@ A cluster of formulation-related keywords appears exclusively in low-rating tone
 - `changed_ingredient`, `new_ingredient` → ★2
 - `new_formula`, `old_formula`, `prior_formula` → ★1
 
-The co-occurrence of `old_formula` and `prior_formula` at the lowest rating tier directly reflects customer sentiment of "the previous version was better." Notably, this pattern is **absent in cleansing oil reviews**, suggesting the toner underwent a formulation change that alienated its established user base.
+The co-occurrence of `old_formula` and `prior_formula` at the lowest rating tier directly reflects customer sentiment of "the previous version was better." Notably, this pattern is **absent in cleansing oil reviews**, suggesting that a segment of established toner users perceived a formulation change and responded negatively.
 
 Conversely, `natural_ingredient` (★5) and `great_ingredient` (★4) confirm that ingredient quality is the primary satisfaction driver when perceived positively.
 
@@ -300,9 +300,9 @@ The keyword `tik_tok` surfaces in reviews of both products but at starkly differ
 - **Cleansing Oil**: `tik_tok` appears at ★4–5 → TikTok-driven customers are satisfied
 - **Toner**: `tik_tok` appears at ★1–2 → TikTok-driven customers are disappointed
 
-This pattern was independently confirmed across both the main LDA pipeline and the TF-IDF filtered pipeline, validating it as a statistically robust signal rather than noise.
+This pattern was consistently observed across both the main LDA pipeline and the TF-IDF filtered pipeline, increasing confidence that it reflects a real signal rather than a pipeline artifact.
 
-> **Business implication**: TikTok content for the toner is generating a mismatch between expected and actual product experience. The marketing message or the content format needs to be realigned with the product's actual efficacy profile. The cleansing oil's TikTok presence, by contrast, is working effectively and could be scaled.
+> **Business implication**: Tik-Tok-associated purchases of the toner correlate with lower satisfaction ratings. Whether this reflects a content-expectation mismatch or a self-selection effect cannot be determined from keyword co-occurrence alone, but the pattern is consistent enough to warrant content strategy review.
 
 ---
 
@@ -342,7 +342,7 @@ Applying a signal-processing framework to the review sequence reveals macro-leve
 - Toner ★1–2 shows minimal `UP` recovery segments
 
 **Interpreting the DOWN-dominant pattern:**
-The prevalence of extended DOWN segments even in high-rating reviews (★4–5) most likely reflects the **narrative structure of skincare reviews** — customers typically describe initial concerns, adjustment periods, or comparative context before arriving at their verdict. This is structurally different from, for example, electronics reviews where sentiment tends to be more front-loaded.
+The prevalence of extended DOWN segments even in high-rating reviews (★4–5) is consistent with a narrative structure in which customers describe initial concerns or adjustment periods before arriving at a positive verdict. This interpretation is inferred from segment shape alone and cannot be confirmed without sentence-level annotation.
 
 It should be noted that this interpretation is inferred from segment shape alone; without sentence-level annotation, the exact cause of DOWN segments cannot be confirmed from the current data.
 
@@ -352,7 +352,7 @@ For low-rating reviews (★1–2), the near-absence of UP recovery in the toner 
 VADER-based scoring (v2) produces longer, more stable segments than the simple sign-lexicon (v1), confirming that sentiment backend quality directly impacts trend extraction reliability.
 
 > **Business implication**: The DOWN-before-verdict structure in high-rating reviews suggests that satisfied customers frequently overcome an initial concern before reaching satisfaction. Proactive communication addressing the most common early-stage concerns (e.g. purging, adjustment period, skin-type fit) — particularly at the point of TikTok or SNS discovery — could reduce early abandonment before the positive outcome is reached. For low-rating toner reviews, the absence of any sentiment recovery indicates structural dissatisfaction (not just a rough start), requiring product-level or communication-level intervention rather than retention messaging alone.
-> Specifically, a targeted post-purchase communication sequence within the first 3–5 days — addressing purging, skin adjustment periods, and skin-type-specific usage guidance — could convert early-stage dropouts into satisfied customers, particularly for the sensitive skin segments identified in Finding 5. For toner low-rating reviews, where no sentiment recovery exists, the intervention point should be pre-purchase: aligning TikTok and SNS content with realistic product expectations for acne-prone sensitive skin (see Finding 4 and Finding 5) rather than post-purchase retention messaging.
+> Specifically, a targeted post-purchase communication sequence in the early usage period — addressing purging, skin adjustment periods, and skin-type-specific usage guidance — could convert early-stage dropouts into satisfied customers, particularly for the sensitive skin segments identified in Finding 5. For toner low-rating reviews, where no sentiment recovery exists, the intervention point should be pre-purchase: aligning TikTok and SNS content with realistic product expectations for acne-prone sensitive skin (see Finding 4 and Finding 5) rather than post-purchase retention messaging.
 
 ---
 

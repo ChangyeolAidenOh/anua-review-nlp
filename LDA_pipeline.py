@@ -51,7 +51,7 @@ def get_bigrams(tokens):
 
 
 def get_adj_noun(text):
-    """Adjective-noun pairs for nuanced sentiment capture (e.g. gentle_cleanser)."""
+    """Adjective-noun pairs for finer-grained sentiment capture (e.g. gentle_cleanser)."""
     if pd.isnull(text):
         return []
     doc = nlp(text.lower())

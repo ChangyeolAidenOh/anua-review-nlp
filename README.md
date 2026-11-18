@@ -25,7 +25,7 @@ A comprehensive NLP analysis of Amazon customer reviews for two ANUA skincare pr
 
 ## Project Overview
 
-The goal of this project is to identify what consumers genuinely value or criticize about ANUA skincare products by analyzing the language patterns within Amazon reviews. Rather than relying on star ratings alone, the project deconstructs review text into latent topics using unsupervised machine learning, enabling a more nuanced understanding of consumer sentiment at each satisfaction level.
+The goal of this project is to identify what consumers genuinely value or criticize about ANUA skincare products by analyzing the language patterns within Amazon reviews. Rather than relying on star ratings alone, the project deconstructs review text into latent topics using unsupervised machine learning, enabling a more detailed understanding of consumer sentiment at each satisfaction level.
 
 The analysis was designed to answer:
 - What topics dominate negative vs. positive reviews?
@@ -160,7 +160,7 @@ Representative coherence scores from this approach:
 | toner | bigram | 3 | 0.7040 |
 | toner | adj_noun | 3 | 0.6477 |
 
-Bigram and adj_noun modes consistently outperformed unigram and unibi_mix, suggesting that phrase-level features better capture the nuanced language of skincare reviews.
+Bigram and adj_noun modes consistently outperformed unigram and unibi_mix, suggesting that phrase-level features better capture the phrasing of skincare reviews.
 
 ### Laplace-Perspective Trend Analysis
 
@@ -285,7 +285,7 @@ A cluster of formulation-related keywords appears exclusively in low-rating tone
 - `changed_ingredient`, `new_ingredient` → ★2
 - `new_formula`, `old_formula`, `prior_formula` → ★1
 
-The co-occurrence of `old_formula` and `prior_formula` at the lowest rating tier directly reflects customer sentiment of "the previous version was better." Notably, this pattern is **absent in cleansing oil reviews**, suggesting that a segment of established toner users perceived a formulation change and responded negatively.
+The co-occurrence of `old_formula` and `prior_formula` at the lowest rating tier directly reflects customer sentiment of "the previous version was better." This pattern is **absent in cleansing oil reviews**, suggesting that a segment of established toner users perceived a formulation change and responded negatively.
 
 Conversely, `natural_ingredient` (★5) and `great_ingredient` (★4) confirm that ingredient quality is the primary satisfaction driver when perceived positively.
 
@@ -342,7 +342,7 @@ Applying a signal-processing framework to the review sequence reveals macro-leve
 - Toner ★1–2 shows minimal `UP` recovery segments
 
 **Interpreting the DOWN-dominant pattern:**
-The prevalence of extended DOWN segments even in high-rating reviews (★4–5) is consistent with a narrative structure in which customers describe initial concerns or adjustment periods before arriving at a positive verdict. This interpretation is inferred from segment shape alone and cannot be confirmed without sentence-level annotation.
+The prevalence of extended DOWN segments even in high-rating reviews (★4–5) is consistent with a review structure in which customers describe initial concerns or adjustment periods before arriving at a positive verdict. This interpretation is inferred from segment shape alone and cannot be confirmed without sentence-level annotation.
 
 It should be noted that this interpretation is inferred from segment shape alone; without sentence-level annotation, the exact cause of DOWN segments cannot be confirmed from the current data.
 
